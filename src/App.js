@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import Login from './login';
+import Register from './register';
+import { useEffect } from 'react';
+import LoadingWrapper from './components/sheared/LoadingWrapper';
+import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route, Navigate } from 'react-router-dom';
+import { ROUTE_CONSTANTS } from './constants'; 
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserProfileInfo } from './state-managment/slices/userProfile';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+
+const App = () => {       
+    const dispatch = useDispatch();
+    const { loading, authUserInfo: { isAuth} } = useSelector(store => store.userProfile);
+    
+    useEffect( () => {
+        dispatch(fetchUserProfileInfo());
+    }, []);
+
+   
+    return (        
+        <LoadingWrapper loading={loading}>
+        <RouterProvider
+         router={
+            createBrowserRouter(
+                createRoutesFromElements(
+                    <Route path="/" element={<Register />}>
+                      <Route path={ROUTE_CONSTANTS.LOGIN} element={ isAuth ? <Navigate to={ROUTE_CONSTANTS.CABINET}/> : <Login />}/>                   
+
+                      <Route path={ROUTE_CONSTANTS.REGISTER} element={ isAuth ? <Navigate to={ROUTE_CONSTANTS.CABINET}/> : <Register />}/>
+                      
+                     
+                    </Route>
+                )
+            )
+         }
+         />
+         </LoadingWrapper>             
+    )
+};
 
 export default App;

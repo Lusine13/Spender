@@ -1,0 +1,11 @@
+.auth_wrapper {
+    max-width: 600px;    
+    margin: 10px auto;    
+}
+
+.form_container {
+    border: 1px solid rgba(221, 220, 220, .92);
+    border-bottom-right-radius: 12px;
+    border-radius: 12px;
+
+}

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { onAuthStateChanged } from 'firebase/auth';
 import { db, auth } from '../../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { FIRESTORE_PATH_NAMES } from '../../../constants';
+import { FIRESTORE_PATH_NAMES } from '../../../core/utils/constants';
 
 
 const initialState = {
@@ -25,7 +25,7 @@ export const fetchUserProfileInfo = createAsyncThunk(`data/fetchUserProfileInfo`
                     if (userData.exists()) {
                         resolve(userData.data())
                     } else {
-                        resolve(null) //TODO ?
+                        resolve(null) 
                     }
                 })
             } else {

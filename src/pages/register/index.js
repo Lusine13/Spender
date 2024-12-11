@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { Form, Button, Input, Flex } from 'antd';
-import { auth, db } from '../firebase';
-import { regexpValidation, ROUTE_CONSTANTS, FIRESTORE_PATH_NAMES } from '../constants';
+import { auth, db } from '../../firebase';
+import { regexpValidation, ROUTE_CONSTANTS, FIRESTORE_PATH_NAMES } from '../../core/utils/constants';
 import { setDoc, doc } from 'firebase/firestore';
-import AuthWrapper from '../components/sheared/AuthWrapper';
+import AuthWrapper from '../../components/sheared/AuthWrapper';
 import { Link, useNavigate } from "react-router-dom";
-import './index.css';
+import registerBanner from '../../core/images/moneyspending.jpg';
+
 
 const Register = () => {
     const [ loading, setLoading ] = useState(false);
@@ -32,7 +33,7 @@ const Register = () => {
     }
 
 return (
-    <AuthWrapper title="Sign up">
+  <AuthWrapper title="Sign up" banner={registerBanner}>
         <Form layout="vertical" form={form} onFinish={handleRegister}>
             <Form.Item
             label="First Name"

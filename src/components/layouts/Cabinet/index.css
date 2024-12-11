@@ -1,0 +1,19 @@
+.cabinet_layout_main_container {
+    display: flex;
+    height: calc(100vh - 66px); /* Ensures the layout fills the height, accounting for any header */
+}
+.menu_item {    
+    border: 2px solid #06010d;
+    border-radius: 10px;
+    background: linear-gradient(#1868db, #e7e4ed);
+    transition: background-color 0.3s ease;
+    padding-left: 0 !important;
+    height: 60px !important;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 400px;
+    
+}
+.menu_item:hover {
+    background-color:#220945
+}

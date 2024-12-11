@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Form, Input, Button, notification } from 'antd';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
 import { Link } from 'react-router-dom';
-import AuthWrapper from '../components/sheared/AuthWrapper';
+import AuthWrapper from '../../components/sheared/AuthWrapper';
 import { useDispatch } from 'react-redux';
-import { fetchUserProfileInfo } from '../state-managment/slices/userProfile';
-import { regexpValidation, ROUTE_CONSTANTS } from '../constants';
+import { fetchUserProfileInfo } from '../../state-managment/slices/userProfile';
+import { regexpValidation, ROUTE_CONSTANTS } from '../../core/utils/constants';
+import loginBanner from '../../core/images/money.jpg';
 
 
 
@@ -34,7 +35,7 @@ const Login = () => {
 
 
   return (
-    <AuthWrapper title="Sign in">
+    <AuthWrapper title="Sign in" banner={loginBanner}>
       <Form layout="vertical" form={form} onFinish={handleLogin}>
         <Form.Item 
         label="Email"

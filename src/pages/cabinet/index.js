@@ -1,29 +1,25 @@
 import React, { useState } from "react"; 
-import { Form, Button, Input, DatePicker, Select, Flex, Typography, notification } from 'antd';
+import { Form, Button, Input, DatePicker, Select, Row, Col, notification } from 'antd';
 import { useDispatch } from 'react-redux';
 import { addWalletEvent } from '../../state-managment/slices/walletEvents';  
 import { auth } from '../../firebase';
 import AuthWrapper from '../../components/sheared/AuthWrapper';
-import { useNavigate } from "react-router-dom";
 import transactionBanner from '../../core/images/money3.jpg';
 import dayjs from 'dayjs';  
 import { Categories } from '../../core/utils/constants';  
 
-const { Title } = Typography;
-
 const Cabinet = () => {
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
-    const navigate = useNavigate();
     const dispatch = useDispatch();
     const userUID = auth.currentUser?.uid;    
     const currentDate = dayjs();
 
     const handleTransaction = async (values) => {
-        const { category, amount } = values;
+        const { category, amount, date } = values;
         setLoading(true);      
         try {
-             dispatch(addWalletEvent({ uid: userUID, category, amount }));           
+            dispatch(addWalletEvent({ uid: userUID, category, amount, date: date.format('YYYY-MM-DD') }));
             notification.success({
                 message: 'Transaction Successful',
                 description: `You have successfully added ${amount} to the ${category} category.`,
@@ -60,6 +56,7 @@ const Cabinet = () => {
                 >
                     <DatePicker placeholder="Select Date" format="YYYY-MM-DD" />
                 </Form.Item>             
+
                 <Form.Item
                     label="Category"
                     name="category"
@@ -78,6 +75,7 @@ const Cabinet = () => {
                         ))}
                     </Select>
                 </Form.Item>              
+
                 <Form.Item
                     label="Amount"
                     name="amount"
@@ -97,11 +95,13 @@ const Cabinet = () => {
                     <Input type="number" placeholder="Please Enter The Amount" />
                 </Form.Item>
 
-                <Flex align="flex-end" gap="10px" justify="flex-end">
-                    <Button type="primary" htmlType="submit" loading={loading}>
-                        Submit
-                    </Button>
-                </Flex>
+                <Row justify="end" gutter={16}>
+                    <Col>
+                        <Button type="primary" htmlType="submit" loading={loading}>
+                            Submit
+                        </Button>
+                    </Col>
+                </Row>
             </Form>
         </AuthWrapper>
     );

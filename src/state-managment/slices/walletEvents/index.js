@@ -2,12 +2,39 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { collection, addDoc, doc, getDocs } from 'firebase/firestore';
 import { db } from '../../../firebase'; 
 import { FIRESTORE_PATH_NAMES } from '../../../core/utils/constants';
+import { saveCurrencyToFirestore, fetchCurrencyFromFirestore } from '../../../core/utils/helpers/currencyEvents';
 
 const initialState = {
   data: [],
   isLoading: false,
   error: null,
+  currency: 'usd',  
 };
+
+export const saveCurrency = createAsyncThunk(
+  'walletEvents/saveCurrency',
+  async ({ uid, currency }, { rejectWithValue }) => {
+    try {      
+      await saveCurrencyToFirestore(uid, currency);      
+      return currency;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchCurrency = createAsyncThunk(
+  'walletEvents/fetchCurrency',
+  async (uid, { rejectWithValue }) => {
+    try {
+      const currency = await fetchCurrencyFromFirestore(uid);
+      return currency;  
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 
 export const addWalletEvent = createAsyncThunk(
   'walletEvents/addWalletEvent',
@@ -27,6 +54,7 @@ export const addWalletEvent = createAsyncThunk(
     }
   }
 );
+
 export const fetchWalletEvents = createAsyncThunk(
   'walletEvents/fetchWalletEvents',
   async (uid, { rejectWithValue }) => {
@@ -44,7 +72,11 @@ export const fetchWalletEvents = createAsyncThunk(
 const walletEvents = createSlice({
   name: 'walletEvents',
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrency: (state, action) => {
+      state.currency = action.payload;  
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(addWalletEvent.pending, (state) => {
@@ -68,8 +100,31 @@ const walletEvents = createSlice({
       .addCase(fetchWalletEvents.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchCurrency.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchCurrency.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.currency = action.payload;  
+      })
+      .addCase(fetchCurrency.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(saveCurrency.pending, (state) => {
+        state.isLoading = true;  
+      })
+      .addCase(saveCurrency.fulfilled, (state, action) => {
+        state.isLoading = false;  
+        state.currency = action.payload;  
+      })
+      .addCase(saveCurrency.rejected, (state, action) => {
+        state.isLoading = false;  
+        state.error = action.payload;  
       });
   }
 });
 
 export default walletEvents.reducer;
+export const { setCurrency } = walletEvents.actions;

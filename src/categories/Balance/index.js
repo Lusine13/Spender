@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addWalletEvent } from '../../state-managment/slices/walletEvents';
 import { Card, Row, Col, Statistic, Spin, message, Button } from 'antd';
@@ -7,29 +7,56 @@ import { useNavigate } from 'react-router-dom';
 const Balance = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { data, isLoading, error } = useSelector(state => state.walletEvents); 
+    
+    const { data, isLoading, error, currency } = useSelector(state => state.walletEvents); 
     const { authUserInfo } = useSelector(state => state.userProfile); 
-    const userUID = authUserInfo?.uid;     
+    const userUID = authUserInfo?.uid;         
+    const [convertedData, setConvertedData] = useState({
+        totalIncome: 0,
+        totalExpenses: 0,
+        balance: 0,
+    });
+    
+    const fetchExchangeRate = async (fromCurrency, toCurrency) => {
+        const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}`);
+        const data = await response.json();
+        return data.rates[toCurrency?.toUpperCase()] || 1; 
+    };
 
-    const incomeTransactions = data.filter(event => event.category === 'income');
-    const expenseTransactions = data.filter(event => event.category !== 'income');
-   
-    const totalIncome = incomeTransactions.reduce((total, event) => total + Number(event.amount), 0); 
-    const totalExpenses = expenseTransactions.reduce((total, event) => total + Number(event.amount), 0);    
-    const balance = totalIncome - totalExpenses;
+    
+    const convertAmounts = async () => {
+        const incomeTransactions = data.filter(event => event.category === 'income');
+        const expenseTransactions = data.filter(event => event.category !== 'income');        
+        const rate = await fetchExchangeRate('USD', currency);  
+        const convertedIncome = incomeTransactions.reduce((total, event) => total + (Number(event.amount) * rate), 0);
+        const convertedExpenses = expenseTransactions.reduce((total, event) => total + (Number(event.amount) * rate), 0);
+        const convertedBalance = convertedIncome - convertedExpenses;
+
+        setConvertedData({
+            totalIncome: convertedIncome,
+            totalExpenses: convertedExpenses,
+            balance: convertedBalance,
+        });
+    };
 
     useEffect(() => {
         if (userUID) {
             dispatch(addWalletEvent(userUID)); 
         }
     }, [dispatch, userUID]);
+    
+    useEffect(() => {
+        if (currency && data.length > 0) {
+            convertAmounts(); 
+        }
+    }, [currency, data]);
 
     if (error) {
         message.error("Error fetching data.");
     }
 
     return (
-        <div style={{ padding: '24px' }}>          
+        <div style={{ padding: '5px' }}>
             <Button
                 type="primary"
                 onClick={() => navigate('/cabinet')}                
@@ -40,29 +67,29 @@ const Balance = () => {
 
             <Row gutter={[16, 16]} style={{ marginBottom: '20px' }}>
                 <Col span={24}>
-                    <Card>
+                    <Card>                        
                         <Statistic 
                             title="Total Income" 
-                            value={totalIncome} 
-                            prefix="$" 
+                            value={convertedData.totalIncome} 
+                            prefix={currency?.toUpperCase() || '$'}  
                             style={{ marginBottom: '10px' }}
-                        />
+                        />                        
                         <Statistic 
                             title="Total Expenses" 
-                            value={totalExpenses} 
-                            prefix="$" 
+                            value={convertedData.totalExpenses} 
+                            prefix={currency?.toUpperCase() || '$'} 
                             style={{ marginBottom: '10px' }}
-                        />
+                        />                        
                         <Statistic 
                             title="Balance" 
-                            value={balance} 
-                            prefix="$" 
-                            valueStyle={{ color: balance >= 0 ? 'green' : 'red' }} 
+                            value={convertedData.balance} 
+                            prefix={currency?.toUpperCase() || '$'}  
+                            valueStyle={{ color: convertedData.balance >= 0 ? 'green' : 'red' }} 
                         />
                     </Card>
                 </Col>
             </Row>
-       
+
             {isLoading ? (
                 <Spin size="large" />
             ) : (

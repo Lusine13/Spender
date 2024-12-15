@@ -1,5 +1,5 @@
 .main_header {
-    background-color: #1868db;
+    background-color: #184a8f;
     padding: 16px;
     color: white;
 }
@@ -13,4 +13,7 @@
   justify-content: space-between;
   align-items: center;
   margin: auto;
+}
+.currency-container {
+  padding-right: 30px;
 }

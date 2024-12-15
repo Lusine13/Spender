@@ -22,6 +22,8 @@ import OtherExpenses from './categories/OtherExpenses';
 import Income from './categories/Income';  
 import Balance from './categories/Balance';
 
+import './App.css'
+
 const App = () => {
     const dispatch = useDispatch();
     const { loading, authUserInfo: { isAuth } } = useSelector(store => store.userProfile);
@@ -36,7 +38,7 @@ const App = () => {
                 router={createBrowserRouter(
                     createRoutesFromElements(
                         <Route path="/" element={<MainLayout />}>
-                            
+                            <Route path="/" element={isAuth ? <Navigate to={ROUTE_CONSTANTS.CABINET}/> : <Navigate to={ROUTE_CONSTANTS.REGISTER} />} />                            
                             <Route path={ROUTE_CONSTANTS.LOGIN} element={isAuth ? <Navigate to={ROUTE_CONSTANTS.CABINET}/> : <Login />} />
                             <Route path={ROUTE_CONSTANTS.REGISTER} element={isAuth ? <Navigate to={ROUTE_CONSTANTS.CABINET}/> : <Register />} />
 

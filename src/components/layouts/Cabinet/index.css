@@ -5,7 +5,7 @@
 .menu_item {    
     border: 2px solid #06010d;
     border-radius: 10px;
-    background: linear-gradient(#1868db, #e7e4ed);
+    background: linear-gradient(#104ea4, #e7e4ed);
     transition: background-color 0.3s ease;
     padding-left: 0 !important;
     height: 60px !important;

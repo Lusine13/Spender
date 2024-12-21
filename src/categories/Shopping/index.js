@@ -51,7 +51,7 @@ const Shopping = () => {
         if (shoppingTransactions.length > 0 && currency) {
             convertAmounts();  
         }
-    }, [shoppingTransactions, currency]);
+    }, [shoppingTransactions, currency, convertAmounts]);
 
     return (
         <div style={{ padding: '5px' }}>           

@@ -48,7 +48,7 @@ const Home = () => {
     if (homeTransactions.length > 0 && currency) {
       convertAmounts();  
     }
-  }, [homeTransactions, currency]);
+  }, [homeTransactions, currency, convertAmounts]);
 
   return (
     <div style={{ padding: '5px' }}>           

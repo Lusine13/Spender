@@ -49,7 +49,7 @@ const Balance = () => {
         if (currency && data.length > 0) {
             convertAmounts(); 
         }
-    }, [currency, data]);
+    }, [currency, data, convertAmounts]);
 
     if (error) {
         message.error("Error fetching data.");

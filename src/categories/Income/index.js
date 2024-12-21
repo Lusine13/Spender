@@ -50,7 +50,7 @@ const Income = () => {
         if (incomeTransactions.length > 0 && currency) {
             convertIncomeAmounts();  
         }
-    }, [incomeTransactions, currency]);
+    }, [incomeTransactions, currency, convertAmounts]);
 
     if (error) {
         return (

@@ -50,7 +50,7 @@ const EatingOut = () => {
         if (eatingOutTransactions.length > 0 && currency) {
             convertAmounts();  
         }
-    }, [eatingOutTransactions, currency]);
+    }, [eatingOutTransactions, currency, convertAmounts]);
 
     return (
         <div style={{ padding: '5px' }}>        

@@ -50,7 +50,7 @@ const Traveling = () => {
         if (travelingTransactions.length > 0 && currency) {
             convertAmounts();  
         }
-    }, [travelingTransactions, currency]);
+    }, [travelingTransactions, currency, convertAmounts]);
 
     return (
         <div style={{ padding: '5px' }}>           

@@ -47,7 +47,7 @@ const Car = () => {
         if (carTransactions.length > 0 && currency) {
             convertAmounts();  
         }
-    }, [carTransactions, currency]);
+    }, [carTransactions, currency, convertAmounts]);
 
     const totalSpentOnCar = convertedTransactions.reduce((total, event) => total + Number(event.convertedAmount), 0);    
 

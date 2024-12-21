@@ -49,7 +49,7 @@ const Education = () => {
         if (educationTransactions.length > 0 && currency) {
             convertAmounts();  
         }
-    }, [educationTransactions, currency]);
+    }, [educationTransactions, currency, convertAmounts]);
 
     return (
         <div style={{ padding: '5px' }}>           

@@ -49,7 +49,7 @@ const OtherExpenses = () => {
         if (otherExpensesTransactions.length > 0 && currency) {
             convertAmounts();  
         }
-    }, [otherExpensesTransactions, currency]);
+    }, [otherExpensesTransactions, currency, convertAmounts]);
 
     return (
         <div style={{ padding: '5px' }}>           

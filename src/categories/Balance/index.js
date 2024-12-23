@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addWalletEvent } from '../../state-managment/slices/walletEvents';
 import { Card, Row, Col, Statistic, Spin, message, Button } from 'antd';
@@ -24,7 +24,7 @@ const Balance = () => {
     };
 
     
-    const convertAmounts = async () => {
+    const convertAmounts = useCallback(async () => {
         const incomeTransactions = data.filter(event => event.category === 'income');
         const expenseTransactions = data.filter(event => event.category !== 'income');        
         const rate = await fetchExchangeRate('USD', currency);  
@@ -37,7 +37,7 @@ const Balance = () => {
             totalExpenses: convertedExpenses,
             balance: convertedBalance,
         });
-    };
+    }, [currency, data]);
 
     useEffect(() => {
         if (userUID) {

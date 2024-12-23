@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Select, theme, Flex } from 'antd';
+import { Button, Select, Flex } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCurrency, fetchCurrency, addWalletEvent } from '../../../state-managment/slices/walletEvents'; 
 import AuthProfileDropDown from '../../sheared/AuthProfileDropDown';
@@ -11,13 +11,12 @@ import { CURRENCY_ITEMS } from '../../../core/utils/constants';
 
 import './index.css';
 
-const { useToken } = theme;
 
 const Header = () => {
   const dispatch = useDispatch();
   const { authUserInfo: { isAuth, userData } } = useSelector((store) => store.userProfile);
   const { currency } = useSelector((store) => store.walletEvents); 
-  const { token } = useToken();
+  
   
   useEffect(() => {
     if (isAuth && userData?.uid) {

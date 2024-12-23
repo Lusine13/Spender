@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchWalletEvents } from '../../state-managment/slices/walletEvents';  
 import { Card, List, Typography, Row, Col, Statistic, Spin, Button } from 'antd'; 
@@ -12,7 +12,8 @@ const OtherExpenses = () => {
     const dispatch = useDispatch();  
     const auth = getAuth();  
     const userUID = auth.currentUser ? auth.currentUser.uid : null;     
-    const { data, isLoading, currency } = useSelector(state => state.walletEvents);     
+    const { data, isLoading, currency } = useSelector(state => state.walletEvents); 
+    const otherExpensesTransactions = data.filter(event => event.category === 'other');    
     
     const [convertedTransactions, setConvertedTransactions] = useState([]);
     
@@ -22,10 +23,10 @@ const OtherExpenses = () => {
         return data.rates[toCurrency?.toUpperCase()] || 1; 
     };
     
-    const convertAmounts = async () => {
+    const convertAmounts = useCallback(async () => {
         const convertedData = await Promise.all(otherExpensesTransactions.map(async (transaction) => {
             const fromCurrency = transaction.currency || 'USD';  
-            const rate = await fetchExchangeRate(fromCurrency, currency);  
+            const rate = await fetchExchangeRate(fromCurrency, currency);
             const convertedAmount = transaction.amount * rate;  
             return {
                 ...transaction,
@@ -33,7 +34,7 @@ const OtherExpenses = () => {
             };
         }));
         setConvertedTransactions(convertedData);
-    };
+    }, [otherExpensesTransactions, currency]);
     
     const totalSpentOnOtherExpenses = convertedTransactions.reduce((total, event) => total + Number(event.convertedAmount), 0);
 
@@ -43,7 +44,6 @@ const OtherExpenses = () => {
         }
     }, [dispatch, userUID]);
     
-    const otherExpensesTransactions = data.filter(event => event.category === 'other');
 
     useEffect(() => {
         if (otherExpensesTransactions.length > 0 && currency) {
@@ -55,7 +55,8 @@ const OtherExpenses = () => {
         <div style={{ padding: '5px' }}>           
             <Button
                 type="primary"
-                onClick={() => navigate('/cabinet')}                
+                onClick={() => navigate('/cabinet')}  
+                style={{ marginBottom: '20px' }}              
             >
                 Back to Cabinet
             </Button>

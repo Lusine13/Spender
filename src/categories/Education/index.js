@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchWalletEvents } from '../../state-managment/slices/walletEvents';  
 import { Card, List, Typography, Row, Col, Statistic, Spin, Button } from 'antd'; 
@@ -24,19 +24,19 @@ const Education = () => {
     };
 
     
-    const convertAmounts = async () => {
+    const convertAmounts = useCallback(async () => {
         const convertedData = await Promise.all(educationTransactions.map(async (transaction) => {
             const fromCurrency = transaction.currency || 'USD';  
-            const rate = await fetchExchangeRate(fromCurrency, currency);  
-            const convertedAmount = transaction.amount * rate; 
+            const rate = await fetchExchangeRate(fromCurrency, currency);
+            const convertedAmount = transaction.amount * rate;  
             return {
                 ...transaction,
                 convertedAmount
             };
         }));
         setConvertedTransactions(convertedData);
-    };
-    
+    }, [educationTransactions, currency]);
+
     const totalSpentOnEducation = convertedTransactions.reduce((total, event) => total + Number(event.convertedAmount), 0);    
 
     useEffect(() => {      
@@ -55,7 +55,8 @@ const Education = () => {
         <div style={{ padding: '5px' }}>           
             <Button
                 type="primary"
-                onClick={() => navigate('/cabinet')}                
+                onClick={() => navigate('/cabinet')}  
+                style={{ marginBottom: '20px' }}              
             >
                 Back to Cabinet
             </Button>

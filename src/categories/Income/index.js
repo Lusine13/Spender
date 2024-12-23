@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addWalletEvent } from '../../state-managment/slices/walletEvents';
 import { Card, List, Typography, Row, Col, Statistic, Spin, Button, Alert } from 'antd'; 
@@ -11,6 +11,7 @@ const Income = () => {
     const dispatch = useDispatch();    
 
     const { data, isLoading, error, currency } = useSelector(state => state.walletEvents); 
+    const incomeTransactions = data.filter(event => event.category === 'income');
     const { authUserInfo } = useSelector(state => state.userProfile); 
     const userUID = authUserInfo?.uid;      
     
@@ -22,7 +23,7 @@ const Income = () => {
         return data.rates[toCurrency?.toUpperCase()] || 1; 
     };
     
-    const convertIncomeAmounts = async () => {
+    const convertIncomeAmounts = useCallback(async () => {
         const convertedData = await Promise.all(incomeTransactions.map(async (transaction) => {
             const fromCurrency = transaction.currency || 'USD';  
             const rate = await fetchExchangeRate(fromCurrency, currency);  
@@ -33,9 +34,9 @@ const Income = () => {
             };
         }));
         setConvertedIncomeTransactions(convertedData);
-    };
+    }, [incomeTransactions, currency]);
 
-    
+      
     const totalIncome = convertedIncomeTransactions.reduce((total, event) => total + Number(event.convertedAmount), 0);
 
     useEffect(() => {
@@ -44,8 +45,7 @@ const Income = () => {
         }
     }, [dispatch, userUID]);
 
-    const incomeTransactions = data.filter(event => event.category === 'income');
-
+   
     useEffect(() => {
         if (incomeTransactions.length > 0 && currency) {
             convertIncomeAmounts();  
@@ -64,7 +64,8 @@ const Income = () => {
         <div style={{ padding: '24px' }}>
             <Button
                 type="primary"
-                onClick={() => navigate('/cabinet')}                
+                onClick={() => navigate('/cabinet')}  
+                style={{ marginBottom: '20px' }}              
             >
                 Back to Cabinet
             </Button>

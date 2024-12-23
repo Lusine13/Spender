@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchWalletEvents } from '../../state-managment/slices/walletEvents'; 
 import { Card, List, Typography, Row, Col, Statistic, Spin, Button } from 'antd'; 
@@ -13,7 +13,8 @@ const Home = () => {
 
   const auth = getAuth();  
   const userUID = auth.currentUser ? auth.currentUser.uid : null;  
-  const { data, isLoading, currency } = useSelector(state => state.walletEvents);   
+  const { data, isLoading, currency } = useSelector(state => state.walletEvents);  
+  const homeTransactions = data.filter(event => event.category === 'home'); 
   const [convertedTransactions, setConvertedTransactions] = useState([]);
   
   const fetchExchangeRate = async (fromCurrency, toCurrency) => {
@@ -22,18 +23,18 @@ const Home = () => {
     return data.rates[toCurrency?.toUpperCase()] || 1;
   };
   
-  const convertAmounts = async () => {
+  const convertAmounts = useCallback(async () => {
     const convertedData = await Promise.all(homeTransactions.map(async (transaction) => {
-      const fromCurrency = transaction.currency || 'USD';  
-      const rate = await fetchExchangeRate(fromCurrency, currency);  
-      const convertedAmount = transaction.amount * rate;  
-      return {
-        ...transaction,
-        convertedAmount
-      };
+        const fromCurrency = transaction.currency || 'USD';  
+        const rate = await fetchExchangeRate(fromCurrency, currency);
+        const convertedAmount = transaction.amount * rate;  
+        return {
+            ...transaction,
+            convertedAmount
+        };
     }));
     setConvertedTransactions(convertedData);
-  };
+}, [homeTransactions, currency]);
 
   const totalSpentOnHome = convertedTransactions.reduce((total, event) => total + Number(event.convertedAmount), 0);
 
@@ -43,7 +44,7 @@ const Home = () => {
     }
   }, [dispatch, userUID]);
   
-  const homeTransactions = data.filter(event => event.category === 'home');
+ 
   useEffect(() => {
     if (homeTransactions.length > 0 && currency) {
       convertAmounts();  
@@ -54,7 +55,8 @@ const Home = () => {
     <div style={{ padding: '5px' }}>           
       <Button
         type="primary"
-        onClick={() => navigate('/cabinet')}     
+        onClick={() => navigate('/cabinet')}  
+        style={{ marginBottom: '20px' }}   
       >
         Back to Cabinet
       </Button>

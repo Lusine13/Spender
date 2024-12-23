@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchWalletEvents } from '../../state-managment/slices/walletEvents';  
 import { Card, List, Typography, Row, Col, Statistic, Spin, Button } from 'antd'; 
@@ -13,7 +13,8 @@ const Shopping = () => {
     const auth = getAuth();  
     const userUID = auth.currentUser ? auth.currentUser.uid : null;        
     
-    const { data, isLoading, currency } = useSelector(state => state.walletEvents);         
+    const { data, isLoading, currency } = useSelector(state => state.walletEvents);  
+    const shoppingTransactions = data.filter(event => event.category === 'shopping');       
     
     const [convertedTransactions, setConvertedTransactions] = useState([]);
     
@@ -24,10 +25,10 @@ const Shopping = () => {
     };
 
     
-    const convertAmounts = async () => {
+    const convertAmounts = useCallback(async () => {
         const convertedData = await Promise.all(shoppingTransactions.map(async (transaction) => {
             const fromCurrency = transaction.currency || 'USD';  
-            const rate = await fetchExchangeRate(fromCurrency, currency);  
+            const rate = await fetchExchangeRate(fromCurrency, currency);
             const convertedAmount = transaction.amount * rate;  
             return {
                 ...transaction,
@@ -35,7 +36,8 @@ const Shopping = () => {
             };
         }));
         setConvertedTransactions(convertedData);
-    };
+    }, [shoppingTransactions, currency]);
+
     
     const totalSpentOnShopping = convertedTransactions.reduce((total, event) => total + Number(event.convertedAmount), 0);
 
@@ -45,8 +47,7 @@ const Shopping = () => {
         }
     }, [dispatch, userUID]);
     
-    const shoppingTransactions = data.filter(event => event.category === 'shopping');
-
+    
     useEffect(() => {
         if (shoppingTransactions.length > 0 && currency) {
             convertAmounts();  
@@ -57,7 +58,8 @@ const Shopping = () => {
         <div style={{ padding: '5px' }}>           
             <Button
                 type="primary"
-                onClick={() => navigate('/cabinet')}                
+                onClick={() => navigate('/cabinet')}   
+                style={{ marginBottom: '20px' }}             
             >
                 Back to Cabinet
             </Button>

@@ -59,7 +59,8 @@ const Balance = () => {
         <div style={{ padding: '5px' }}>
             <Button
                 type="primary"
-                onClick={() => navigate('/cabinet')}                
+                onClick={() => navigate('/cabinet')}   
+                style={{ marginBottom: '20px' }}             
             >
                 Back to Cabinet
             </Button>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, Button, notification, Flex} from 'antd';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase';
 import { Link } from 'react-router-dom';
@@ -65,18 +65,16 @@ const Login = () => {
         ]}
         >
           <Input.Password placeholder="Password"/>
-        </Form.Item>
-
-        <Button type="primary" htmlType="submit" loading={loading} >
-          Sign in
+        </Form.Item>  
+        <Flex justify="space-between" align="center">
+        <Link to={ROUTE_CONSTANTS.REGISTER} style={{ fontSize: "16px", fontWeight: 500 }}>Create account</Link>
+        <Button type="primary" loading={loading} size="large" htmlType="submit">
+            Sign in
         </Button>
-        <Link to={ROUTE_CONSTANTS.REGISTER}>Create account</Link>
+        </Flex>        
       </Form>
     </AuthWrapper>
   )
 }
-
-
-
 
 export default Login;

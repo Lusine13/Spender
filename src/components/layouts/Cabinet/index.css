@@ -1,6 +1,6 @@
 .cabinet_layout_main_container {
     display: flex;
-    height: calc(100vh - 66px); /* Ensures the layout fills the height, accounting for any header */
+    height: calc(100vh - 75px); 
 }
 .menu_item {    
     border: 2px solid #06010d;

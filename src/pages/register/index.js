@@ -118,7 +118,7 @@ return (
             <Link to={ROUTE_CONSTANTS.LOGIN} style={{ fontSize: "16px", fontWeight: 500 }}>Sign in</Link>
             <Button type="primary" loading={loading} size="large" htmlType="submit">Sign up</Button>
           </Flex>
-
+          
         </Form>
       </AuthWrapper>
   )
